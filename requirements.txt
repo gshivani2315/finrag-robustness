@@ -1,0 +1,12 @@
+# Core (needed for BM25, metrics, pipeline, tests)
+numpy>=1.24
+rank-bm25>=0.2.2
+pytest>=7.0
+
+# Contriever reranking (only needed when you run the bm25+contriever retriever)
+torch>=2.0
+transformers>=4.30
+
+# Plots (Stage 7)
+pandas>=2.0
+matplotlib>=3.7
