@@ -23,6 +23,12 @@ def _to_float(span: str) -> float:
     return float(span.replace("$", "").replace("%", "").replace(",", "").strip())
 
 
+def _in_context(arg: str, context: str) -> bool:
+    # Match the argument as a whole token, so "1" does not match "1452.4".
+    pattern = r"(?<![\w.])" + re.escape(arg) + r"(?![\w.]|\d)"
+    return re.search(pattern, context) is not None
+
+
 def verify_program(program: str, operands: List[Dict], context: str) -> Tuple[bool, str]:
     """Return (is_valid, error_message). Checks run in order and stop at the first failure."""
     m = PROGRAM_RE.match(program.strip())
@@ -33,9 +39,9 @@ def verify_program(program: str, operands: List[Dict], context: str) -> Tuple[bo
         return False, f"unknown operation: {op}"
     args = _split_args(arg_str)
 
-    # Check 1: pointer validity. Every argument must appear in the passage.
+    # Check 1: pointer validity. Every argument must appear in the passage as a whole token.
     for a in args:
-        if a not in context:
+        if not _in_context(a, context):
             return False, f"operand not found in context: {a}"
 
     if op == "lookup":
